@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import FeaturesBar from "../featuresBar";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import API from "../../service/api"; 
 
 const Checkout = () => {
     const navigate = useNavigate();
@@ -25,36 +26,27 @@ const Checkout = () => {
     });
 
     // Fetch cart
-    useEffect(() => {
-        const fetchCart = async () => {
-            try {
-                const token = localStorage.getItem("token");
+useEffect(() => {
+  const fetchCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-                if (!token) {
-                    navigate("/auth"); // if not logged in redirect
-                    return;
-                }
+      if (!token) {
+        navigate("/auth");
+        return;
+      }
 
-                const res = await fetch("http://localhost:5000/api/cart", {
-                    headers: {
-                        Authorization: token
-                    }
-                });
+      const { data } = await API.get("/cart");
+      setCartItems(data);
 
-                if (!res.ok) {
-                    navigate("/auth");
-                    return;
-                }
+    } catch (error) {
+      console.error("Error fetching cart:", error.response?.data);
+      navigate("/auth");
+    }
+  };
 
-                const data = await res.json();
-                setCartItems(data);
-            } catch (error) {
-                console.error("Error fetching cart:", error);
-            }
-        };
-
-        fetchCart();
-    }, [navigate]);
+  fetchCart();
+}, [navigate]);
 
     const total = Array.isArray(cartItems)
         ? cartItems.reduce((acc, item) => {
@@ -70,37 +62,27 @@ const Checkout = () => {
         });
     };
 
-    const handlePlaceOrder = async () => {
-        try {
-            const token = localStorage.getItem("token");
+const handlePlaceOrder = async () => {
+  try {
+    const token = localStorage.getItem("token");
 
-            if (!token) {
-                navigate("/auth");
-                return;
-            }
+    if (!token) {
+      navigate("/auth");
+      return;
+    }
 
-            const res = await fetch("http://localhost:5000/api/orders", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: token
-                },
-                body: JSON.stringify({
-                    billingDetails,
-                    paymentMethod
-                })
-            });
+    await API.post("/orders", {
+      billingDetails,
+      paymentMethod
+    });
 
-            if (!res.ok) {
-                navigate("/auth");
-                return;
-            }
+    navigate("/order-success");
 
-            navigate("/order-success");
-        } catch (error) {
-            console.error("Order error:", error);
-        }
-    };
+  } catch (error) {
+    console.error("Order error:", error.response?.data);
+    alert("Failed to place order");
+  }
+};
 
     return (
         <div>

@@ -1,28 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../../service/api";   
 
 const OrderSuccess = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
+useEffect(() => {
+  window.scrollTo(0, 0);
 
-        const fetchLatestOrder = async () => {
-            try {
-                const res = await fetch("http://localhost:5000/api/orders");
-                const data = await res.json();
+  const fetchLatestOrder = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-                if (data.length > 0) {
-                    setOrder(data[data.length - 1]); // latest order
-                }
-            } catch (error) {
-                console.error("Error fetching order:", error);
-            }
-        };
+      if (!token) {
+        navigate("/auth");
+        return;
+      }
 
-        fetchLatestOrder();
-    }, []);
+      const { data } = await API.get("/orders");
+
+      if (data.length > 0) {
+        setOrder(data[data.length - 1]);
+      }
+
+    } catch (error) {
+      console.error("Error fetching order:", error.response?.data);
+      navigate("/auth");
+    }
+  };
+
+  fetchLatestOrder();
+}, [navigate]);
 
     if (!order) {
         return (

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../service/api"; 
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -17,37 +18,28 @@ const Auth = () => {
   };
 
 const handleSubmit = async () => {
-  const endpoint = isLogin ? "login" : "register";
+  const endpoint = isLogin ? "/auth/login" : "/auth/register";
 
   try {
-    const res = await fetch(`http://localhost:5000/api/auth/${endpoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
-    });
+    const { data } = await API.post(endpoint, form);
 
-    const data = await res.json();
-
-    console.log("Response:", data);  
-
-    if (!res.ok) {
-      alert(data.message);
-      return;
-    }
+    console.log("Response:", data);
 
     if (!isLogin) {
       alert("Registered successfully!");
-      setIsLogin(true);   
+      setIsLogin(true);
       return;
     }
 
+    // Save token + user
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
 
     navigate("/");
 
   } catch (error) {
-    console.error("AUTH ERROR:", error);
+    console.error("AUTH ERROR:", error.response?.data?.message);
+    alert(error.response?.data?.message || "Something went wrong");
   }
 };
 

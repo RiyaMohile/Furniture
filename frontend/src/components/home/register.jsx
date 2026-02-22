@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../service/api"; 
 
 const Register = () => {
     const navigate = useNavigate();
@@ -13,18 +14,17 @@ const Register = () => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleRegister = async () => {
-        const res = await fetch("http://localhost:5000/api/auth/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(form)
-        });
+const handleRegister = async () => {
+  try {
+    const { data } = await API.post("/auth/register", form);
 
-        const data = await res.json();
-        alert(data.message);
+    alert(data.message || "Registered successfully!");
+    navigate("/login");
 
-        if (res.ok) navigate("/login");
-    };
+  } catch (error) {
+    alert(error.response?.data?.message || "Registration failed");
+  }
+};
 
     return (
         <div className="h-screen flex flex-col items-center justify-center gap-4">

@@ -2,25 +2,21 @@ import React, { useEffect, useState } from "react";
 import { ChevronRight, Trash2 } from "lucide-react";
 import FeaturesBar from "../featuresBar";
 import { useNavigate } from "react-router-dom";
+import API from "../../service/api"; 
 
 const CartProduct = () => {
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
 
     // Fetch Cart Items
-    const fetchCart = async () => {
-        try {
-            const res = await fetch("http://localhost:5000/api/cart", {
-                headers: {
-                    Authorization: localStorage.getItem("token")
-                }
-            });
-            const data = await res.json();
-            setCartItems(data);
-        } catch (error) {
-            console.error("Error fetching cart:", error);
-        }
-    };
+const fetchCart = async () => {
+  try {
+    const { data } = await API.get("/cart");
+    setCartItems(data);
+  } catch (error) {
+    console.error("Error fetching cart:", error.response?.data);
+  }
+};
 
     useEffect(() => {
         fetchCart();
@@ -36,26 +32,18 @@ const CartProduct = () => {
     }, []);
 
     // Update Quantity
-    const updateQuantity = async (id, qty) => {
-        if (qty < 1) return;
+const updateQuantity = async (id, qty) => {
+  if (qty < 1) return;
 
-        await fetch(`http://localhost:5000/api/cart/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ quantity: qty })
-        });
-
-        fetchCart();
-    };
+  await API.put(`/cart/${id}`, { quantity: qty });
+  fetchCart();
+};
 
     // Delete Item
-    const deleteItem = async (id) => {
-        await fetch(`http://localhost:5000/api/cart/${id}`, {
-            method: "DELETE"
-        });
-
-        fetchCart();
-    };
+const deleteItem = async (id) => {
+  await API.delete(`/cart/${id}`);
+  fetchCart();
+};
 
     // Safe Subtotal Calculation
     const subtotal = cartItems.reduce((acc, item) => {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../service/api"; 
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,24 +13,18 @@ const Login = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async () => {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
-    });
+const handleLogin = async () => {
+  try {
+    const { data } = await API.post("/auth/login", form);
 
-    const data = await res.json();
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
 
-    if (res.ok) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      navigate("/");
-    } else {
-      alert(data.message);
-    }
-  };
-
+    navigate("/");
+  } catch (error) {
+    alert(error.response?.data?.message || "Login failed");
+  }
+};
   return (
     <div className="h-screen flex flex-col items-center justify-center gap-4">
       <h1 className="text-3xl font-bold">Login</h1>

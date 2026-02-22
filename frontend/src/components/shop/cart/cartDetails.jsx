@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Star } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import productsData from "../../data/productsData";
+import API from "../../service/api"; 
 
 const CartDetails = () => {
   const { productName } = useParams();
@@ -12,51 +13,34 @@ const CartDetails = () => {
   const [mainImage, setMainImage] = useState(null);
 
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:5000/api/products/${productName}`
-        );
-
-        if (!res.ok) {
-          console.log("Product not found");
-          return;
-        }
-
-        const data = await res.json();
-        setProduct(data);
-        setMainImage(data.src);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      }
-    };
-
-    fetchProduct();
-    window.scrollTo(0, 0);
-  }, [productName]);
-
-
-  const handleCart = async () => {
+ useEffect(() => {
+  const fetchProduct = async () => {
     try {
-      await fetch("http://localhost:5000/api/cart/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token")
-        },
-        body: JSON.stringify({
-          productId: product._id,
-          quantity
-        })
-      });
-
-      navigate("/cart");
+      const { data } = await API.get(`/products/${productName}`);
+      setProduct(data);
+      setMainImage(data.src);
     } catch (error) {
-      console.error("Error adding to cart:", error);
+      console.log("Product not found");
     }
   };
 
+  fetchProduct();
+  window.scrollTo(0, 0);
+}, [productName]);
+
+
+const handleCart = async () => {
+  try {
+    await API.post("/cart/add", {
+      productId: product._id,
+      quantity
+    });
+
+    navigate("/cart");
+  } catch (error) {
+    console.error("Error adding to cart:", error.response?.data);
+  }
+};
   const handleComparison = () => {
     navigate("/productComparison");
   };

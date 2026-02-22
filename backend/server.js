@@ -8,6 +8,8 @@ const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
 const authRoutes = require("./routes/auth");
 
+const PORT = process.env.PORT || 5000;
+
 
 const app = express();
 
@@ -23,6 +25,6 @@ app.use("/api/orders", orderRoutes);
 
 app.use("/api/auth", authRoutes);
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
