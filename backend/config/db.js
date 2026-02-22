@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const createDefaultUsers = require("../seed");
 
 const connectDB = async () => {
   try {
@@ -6,6 +7,8 @@ const connectDB = async () => {
 
       console.log("MongoDB Connected");
     })
+
+    await createDefaultUsers();
   } catch (err) {
     console.error(err);
     process.exit(1);
