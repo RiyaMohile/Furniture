@@ -15,7 +15,7 @@ const app = express();
 
 app.use(cors({
   origin: [
-    "https://furniture-vysa.vercel.app",
+    "https://furniture-vysa.vercel.app"
     // "http://localhost:5173"
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
