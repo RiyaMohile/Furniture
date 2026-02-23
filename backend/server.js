@@ -35,6 +35,10 @@ app.use(express.json());
 
 connectDB();
 
+app.get("/", (req, res) => {
+  res.send("Backend is live");
+});
+
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
