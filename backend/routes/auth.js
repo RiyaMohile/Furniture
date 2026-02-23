@@ -5,7 +5,7 @@ const User = require("../models/user");
 
 const router = express.Router();
 
-const JWT_SECRET = "mysecretkey"; 
+// const JWT_SECRET = "mysecretkey"; 
 
 router.post("/register", async (req, res) => {
   try {
@@ -49,7 +49,7 @@ router.post("/login", async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d"
     });
 

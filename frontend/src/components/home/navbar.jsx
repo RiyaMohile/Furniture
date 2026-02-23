@@ -9,6 +9,8 @@ const Navbar = ({ setCartOpen }) => {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
+  console.log("Navbar Rendered - user:", user);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -21,16 +23,23 @@ const Navbar = ({ setCartOpen }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleUserClick = () => {
-    const token = localStorage.getItem("token");
+const handleUserClick = () => {
+  const token = localStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
 
-    if (!token) {
-      navigate("/auth");
-      return;
-    }
+  console.log("User icon clicked");
+  console.log("Token:", token);
+  console.log("Stored User:", storedUser);
 
-    setShowDropdown(!showDropdown);
-  };
+  if (!token || !storedUser) {
+    console.log("Navigating to /auth");
+    navigate("/auth");
+    return;
+  }
+
+  console.log("Opening dropdown");
+  setShowDropdown(prev => !prev);
+};
 
   const handleLogout = () => {
     localStorage.removeItem("token");
