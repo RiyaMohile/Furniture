@@ -13,23 +13,17 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
-const allowedOrigins = [
-  // "http://localhost:5173",
-  "https://furniture-vysa.vercel.app"
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: [
+    "https://furniture-vysa.vercel.app",
+    // "http://localhost:5173"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
+app.options("*", cors());
+
 app.use(express.json());
 
 
