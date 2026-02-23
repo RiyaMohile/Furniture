@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ChevronRight, Trash2 } from "lucide-react";
 import FeaturesBar from "../featuresBar";
 import { useNavigate } from "react-router-dom";
-import API from "../../service/api"; 
+import API from "../../../service/api"; 
 
 const CartProduct = () => {
     const navigate = useNavigate();

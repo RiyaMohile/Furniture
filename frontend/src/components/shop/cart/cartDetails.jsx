@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Star } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import productsData from "../../data/productsData";
-import API from "../../service/api"; 
+import API from "../../../service/api"; 
 
 const CartDetails = () => {
   const { productName } = useParams();
