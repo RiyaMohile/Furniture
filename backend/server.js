@@ -13,14 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
-app.use(cors({
-  origin: [
-    "furniture-ashen-xi.vercel.app"
-    // "http://localhost:5173"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(cors());
 
 app.use(express.json());
 
